@@ -45,6 +45,10 @@
 # define S_IWRITE S_IWUSR
 #endif
 
+#if defined(__MORPHOS__)
+# define PACKAGE "GemRB"
+#endif
+
 #include "RGBAColor.h"
 #include "SClassID.h"
 #include "errors.h"

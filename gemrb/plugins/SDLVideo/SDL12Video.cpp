@@ -322,9 +322,11 @@ int SDL12VideoDriver::ProcessEvent(const SDL_Event & event)
 					EvntManager->OnSpecialKeyPress( GEM_MOUSEOUT );
 			}
 			break;
+#if !defined(__MORPHOS__)
 		case SDL_JOYAXISMOTION:
 			gamepadControl.HandleAxisEvent(event.jaxis.axis, event.jaxis.value);
 		break;
+#endif
 		case SDL_JOYBUTTONDOWN:
 		case SDL_JOYBUTTONUP:
 			HandleJoyButtonEvent(event.jbutton);

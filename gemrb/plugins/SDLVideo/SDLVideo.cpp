@@ -70,7 +70,9 @@ SDLVideoDriver::SDLVideoDriver(void)
 	subtitlestrref = 0;
 	subtitletext = NULL;
 	disp = tmpBuf =  NULL;
+#if !defined(__MORPHOS__)
 	gamepadControl.SetPointerSpeed(core->GamepadPointerSpeed);
+#endif
 }
 
 SDLVideoDriver::~SDLVideoDriver(void)
@@ -112,10 +114,11 @@ int SDLVideoDriver::SwapBuffers(void)
 	}
 	lastTime = time;
 
+#if !defined(__MORPHOS__)
 	if (SDL_NumJoysticks() > 0) {
 		ProcessAxisMotion();
 	}
-
+#endif
 	if (Cursor[CursorIndex] && !(MouseFlags & (MOUSE_DISABLED | MOUSE_HIDDEN))) {
 		
 		if (MouseFlags&MOUSE_GRAYED) {
@@ -333,9 +336,11 @@ int SDLVideoDriver::ProcessEvent(const SDL_Event & event)
 			break;
 		case SDL_MOUSEMOTION:
 			MouseMovement(event.motion.x, event.motion.y);
+#if !defined(__MORPHOS__)
 			if (SDL_NumJoysticks() > 0) {
 				gamepadControl.SetGamepadPosition(event.motion.x, event.motion.y);
 			}
+#endif
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			if (MouseFlags & MOUSE_DISABLED)
@@ -413,6 +418,7 @@ void SDLVideoDriver::HandleJoyButtonEvent(const SDL_JoyButtonEvent & button)
 	} else
 #endif
 	{
+#if !defined(__MORPHOS__)
 		//gameplay bindings
 		switch(button.button)
 		{
@@ -479,8 +485,11 @@ void SDLVideoDriver::HandleJoyButtonEvent(const SDL_JoyButtonEvent & button)
 			default:
 				return;
 		}
+#endif
 	}
 }
+
+#if !defined(__MORPHOS__)
 
 void SDLVideoDriver::GamepadMouseEvent(Uint8 buttonCode, Uint8 buttonState)
 {
@@ -568,6 +577,8 @@ void SDLVideoDriver::ProcessAxisMotion()
 		gamepadControl.gamepadScrollTimer = 0;
 	}
 }
+
+#endif
 
 Sprite2D* SDLVideoDriver::CreateSprite(int w, int h, int bpp, ieDword rMask,
 	ieDword gMask, ieDword bMask, ieDword aMask, void* pixels, bool cK, int index)

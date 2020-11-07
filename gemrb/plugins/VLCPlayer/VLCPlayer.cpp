@@ -26,6 +26,9 @@ using namespace GemRB;
 VLCPlayer::VLCPlayer(void)
 {
 	libvlc = libvlc_new(0, NULL);
+	mediaPlayer = NULL;
+	media = NULL;
+	ctx = NULL;
 }
 
 VLCPlayer::~VLCPlayer(void)

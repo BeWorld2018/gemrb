@@ -33,7 +33,17 @@ Palette* GemMarkupParser::GetSharedPalette(const String& colorString)
 
 	Color palCol = { 0, 0, 0, 0 };
 	unsigned int r, g, b;
+
+#if defined(__MORPHOS__) && !defined(WARPUP)
+
+	char *colors = new char[255];
+	wcstombs(colors, colorString.c_str(), 255);
+	sscanf(colors, "%02X%02X%02X", &r, &g, &b);
+
+#else
 	swscanf(colorString.c_str(), L"%02X%02X%02X", &r, &g, &b);
+#endif
+
 	palCol.r = r;
 	palCol.g = g;
 	palCol.b = b;

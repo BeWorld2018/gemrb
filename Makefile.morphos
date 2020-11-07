@@ -1,0 +1,632 @@
+#
+#
+
+CC	= gcc
+CXX	= g++
+TARGET	= gemrb.master
+BUILD	= obj_morphos
+CORE	= $(BUILD)/core
+PLUGINS	= $(BUILD)/plugins
+
+#OBJDIRS:
+#	mkdir $(BUILD)
+#	mkdir $(CORE)
+#	mkdir $(PLUGINS)
+
+LIBS = `sdl-config-mos --libs` -lSDL_mixer -lopenal -lpython2.7
+
+LDFLAGS = -s
+
+INCS = -I$(BUILD) -Igemrb/includes -Igemrb/core -Igg:os-include/Python2.7 -Igg:os-include/AL
+CPPFLAGS = -O2 -mcpu=750 -fsigned-char -fvisibility=hidden -fexceptions -ffast-math -fpermissive -finline -fno-PIE -s `sdl-config-mos --cflags` -DSTATIC_LINK=Yes -DNOCOLOR=1 -DHAVE_CONFIG_H $(INCS)
+
+DO_CXX = $(CXX) $(CPPFLAGS) -o $@ -c $<
+
+OBJCORE = \
+		$(CORE)/ActorMgr.o \
+		$(CORE)/Ambient.o \
+		$(CORE)/AmbientMgr.o \
+		$(CORE)/Animation.o \
+		$(CORE)/AnimationFactory.o \
+		$(CORE)/AnimationMgr.o \
+		$(CORE)/ArchiveImporter.o \
+		$(CORE)/Audio.o \
+		$(CORE)/Bitmap.o \
+		$(CORE)/Cache.o \
+		$(CORE)/Calendar.o \
+		$(CORE)/CharAnimations.o \
+		$(CORE)/Compressor.o \
+		$(CORE)/ControlAnimation.o \
+		$(CORE)/Core.o \
+		$(CORE)/DataFileMgr.o \
+		$(CORE)/Dialog.o \
+		$(CORE)/DialogHandler.o \
+		$(CORE)/DialogMgr.o \
+		$(CORE)/DisplayMessage.o \
+		$(CORE)/EffectMgr.o \
+		$(CORE)/EffectQueue.o \
+		$(CORE)/Factory.o \
+		$(CORE)/FactoryObject.o \
+		$(CORE)/FileCache.o \
+		$(CORE)/FontManager.o \
+		$(CORE)/Game.o \
+		$(CORE)/GameData.o \
+		$(CORE)/GlobalTimer.o \
+		$(CORE)/Image.o \
+		$(CORE)/ImageFactory.o \
+		$(CORE)/ImageMgr.o \
+		$(CORE)/ImageWriter.o \
+		$(CORE)/IndexedArchive.o \
+		$(CORE)/IniSpawn.o \
+		$(CORE)/Interface.o \
+		$(CORE)/InterfaceConfig.o \
+		$(CORE)/Inventory.o \
+		$(CORE)/Item.o \
+		$(CORE)/ItemMgr.o \
+		$(CORE)/KeyMap.o \
+		$(CORE)/LRUCache.o \
+		$(CORE)/Map.o \
+		$(CORE)/MapMgr.o \
+		$(CORE)/MapReverb.o \
+		$(CORE)/MoviePlayer.o \
+		$(CORE)/MusicMgr.o \
+		$(CORE)/Palette.o \
+		$(CORE)/PalettedImageMgr.o \
+		$(CORE)/Particles.o \
+		$(CORE)/PathFinder.o \
+		$(CORE)/Plugin.o \
+		$(CORE)/PluginMgr.o \
+		$(CORE)/Polygon.o \
+		$(CORE)/Projectile.o \
+		$(CORE)/ProjectileMgr.o \
+		$(CORE)/ProjectileServer.o \
+		$(CORE)/Region.o \
+		$(CORE)/Resource.o \
+		$(CORE)/ResourceDesc.o \
+		$(CORE)/ResourceManager.o \
+		$(CORE)/ResourceSource.o \
+		$(CORE)/SaveGameIterator.o \
+		$(CORE)/SaveGameMgr.o \
+		$(CORE)/ScriptEngine.o \
+		$(CORE)/ScriptedAnimation.o \
+		$(CORE)/SoundMgr.o \
+		$(CORE)/Spell.o \
+		$(CORE)/SpellMgr.o \
+		$(CORE)/Spellbook.o \
+		$(CORE)/Sprite2D.o \
+		$(CORE)/SpriteCover.o \
+		$(CORE)/Store.o \
+		$(CORE)/StoreMgr.o \
+		$(CORE)/StringMgr.o \
+		$(CORE)/SymbolMgr.o \
+		$(CORE)/TableMgr.o \
+		$(CORE)/Tile.o \
+		$(CORE)/TileMap.o \
+		$(CORE)/TileMapMgr.o \
+		$(CORE)/TileOverlay.o \
+		$(CORE)/TileSetMgr.o \
+		$(CORE)/Variables.o \
+		$(CORE)/VEFObject.o \
+		$(CORE)/Video.o \
+		$(CORE)/WindowMgr.o \
+		$(CORE)/WorldMap.o \
+		$(CORE)/WorldMapMgr.o \
+		$(CORE)/RNG.o \
+\
+		$(CORE)/Actions.o \
+		$(CORE)/GSUtils.o \
+		$(CORE)/GameScript.o \
+		$(CORE)/Matching.o \
+		$(CORE)/Objects.o \
+		$(CORE)/Triggers.o \
+\
+		$(CORE)/Button.o \
+		$(CORE)/Console.o \
+		$(CORE)/Control.o \
+		$(CORE)/EventMgr.o \
+		$(CORE)/GameControl.o \
+		$(CORE)/Label.o \
+		$(CORE)/MapControl.o \
+		$(CORE)/Progressbar.o \
+		$(CORE)/ScrollBar.o \
+		$(CORE)/Slider.o \
+		$(CORE)/TextArea.o \
+		$(CORE)/TextEdit.o \
+		$(CORE)/Font.o \
+		$(CORE)/GemMarkup.o \
+		$(CORE)/TextContainer.o \
+		$(CORE)/Window.o \
+		$(CORE)/WorldMapControl.o \
+\
+		$(CORE)/Actor.o \
+		$(CORE)/CombatInfo.o \
+		$(CORE)/Container.o \
+		$(CORE)/Door.o \
+		$(CORE)/InfoPoint.o \
+		$(CORE)/Scriptable.o \
+		$(CORE)/PCStatStruct.o \
+\
+		$(CORE)/DataStream.o \
+		$(CORE)/FileStream.o \
+\
+		$(CORE)/MemoryStream.o \
+		$(CORE)/Logger.o \
+		$(CORE)/File.o \
+		$(CORE)/MessageWindowLogger.o \
+		$(CORE)/Stdio.o \
+		$(CORE)/Logging.o \
+		$(CORE)/SlicedStream.o \
+		$(CORE)/String.o \
+		$(CORE)/StringBuffer.o \
+		$(CORE)/swab.o \
+		$(CORE)/VFS.o \
+		$(CORE)/GemRB.o \
+		$(CORE)/Morphos_extra.o
+
+OBJPLUGINS =	$(PLUGINS)/2DAImporter.o \
+		$(PLUGINS)/ACMReader.o \
+		$(PLUGINS)/decoder.o \
+		$(PLUGINS)/unpacker.o \
+		$(PLUGINS)/AREImporter.o \
+		$(PLUGINS)/BAMFontManager.o \
+		$(PLUGINS)/BAMSprite2D.o \
+		$(PLUGINS)/BAMImporter.o \
+		$(PLUGINS)/BIFImporter.o \
+		$(PLUGINS)/BIKPlayer.o \
+		$(PLUGINS)/dct.o \
+		$(PLUGINS)/fft.o \
+		$(PLUGINS)/GetBitContext.o \
+		$(PLUGINS)/mem.o \
+		$(PLUGINS)/rational.o \
+		$(PLUGINS)/rdft.o \
+		$(PLUGINS)/BMPImporter.o \
+		$(PLUGINS)/BMPWriter.o \
+		$(PLUGINS)/CHUImporter.o \
+		$(PLUGINS)/CREImporter.o \
+		$(PLUGINS)/DirectoryImporter.o \
+		$(PLUGINS)/DLGImporter.o \
+		$(PLUGINS)/EFFImporter.o \
+		$(PLUGINS)/FXOpcodes.o \
+		$(PLUGINS)/GAMImporter.o \
+		$(PLUGINS)/GUIScript.o \
+		$(PLUGINS)/PythonHelpers.o \
+		$(PLUGINS)/IDSImporter.o \
+		$(PLUGINS)/INIImporter.o \
+		$(PLUGINS)/ITMImporter.o \
+		$(PLUGINS)/IWDOpcodes.o \
+		$(PLUGINS)/KEYImporter.o \
+		$(PLUGINS)/MOSImporter.o \
+		$(PLUGINS)/MUSImporter.o \
+		$(PLUGINS)/MVEPlayer.o \
+		$(PLUGINS)/mveaudiodec.o \
+		$(PLUGINS)/mvevideodec8.o \
+		$(PLUGINS)/mve_player.o \
+		$(PLUGINS)/mvevideodec16.o \
+		$(PLUGINS)/NullSound.o \
+		$(PLUGINS)/NullSource.o \
+		$(PLUGINS)/OpenALAudio.o \
+		$(PLUGINS)/AmbientMgrAL.o \
+		$(PLUGINS)/StackLock.o \
+		$(PLUGINS)/PLTImporter.o \
+		$(PLUGINS)/PROImporter.o \
+		$(PLUGINS)/PSTOpcodes.o \
+		$(PLUGINS)/SAVImporter.o \
+		$(PLUGINS)/SDLAudio.o \
+		$(PLUGINS)/SDLVideo.o \
+		$(PLUGINS)/SDL12Video.o \
+		$(PLUGINS)/SDLSurfaceSprite2D.o \
+		$(PLUGINS)/SPLImporter.o \
+		$(PLUGINS)/STOImporter.o \
+		$(PLUGINS)/TISImporter.o \
+		$(PLUGINS)/TLKImporter.o \
+		$(PLUGINS)/TlkOverride.o \
+		$(PLUGINS)/WAVReader.o \
+		$(PLUGINS)/WEDImporter.o \
+		$(PLUGINS)/WMPImporter.o \
+		$(PLUGINS)/ZLibManager.o
+
+GEMRB = $(BUILD)/$(TARGET)
+
+all: $(GEMRB)
+
+$(GEMRB): $(OBJCORE) $(OBJPLUGINS)
+	$(CXX) -o $@ $(CORE)/*.o $(PLUGINS)/*.o $(LIBS)
+	strip $(GEMRB)
+
+
+
+$(CORE)/ActorMgr.o:	gemrb/core/ActorMgr.cpp
+	$(DO_CXX)
+$(CORE)/Ambient.o:	gemrb/core/Ambient.cpp
+	$(DO_CXX)
+$(CORE)/AmbientMgr.o:	gemrb/core/AmbientMgr.cpp
+	$(DO_CXX)
+$(CORE)/Animation.o:	gemrb/core/Animation.cpp
+	$(DO_CXX)
+$(CORE)/AnimationFactory.o: gemrb/core/AnimationFactory.cpp
+	$(DO_CXX)
+$(CORE)/AnimationMgr.o:	gemrb/core/AnimationMgr.cpp
+	$(DO_CXX)
+$(CORE)/ArchiveImporter.o: gemrb/core/ArchiveImporter.cpp
+	$(DO_CXX)
+$(CORE)/Audio.o:	gemrb/core/Audio.cpp
+	$(DO_CXX)
+$(CORE)/Bitmap.o:	gemrb/core/Bitmap.cpp
+	$(DO_CXX)
+$(CORE)/Cache.o:	gemrb/core/Cache.cpp
+	$(DO_CXX)
+$(CORE)/Calendar.o:	gemrb/core/Calendar.cpp
+	$(DO_CXX)
+$(CORE)/CharAnimations.o: gemrb/core/CharAnimations.cpp
+	$(DO_CXX)
+$(CORE)/Compressor.o:	gemrb/core/Compressor.cpp
+	$(DO_CXX)
+$(CORE)/ControlAnimation.o: gemrb/core/ControlAnimation.cpp
+	$(DO_CXX)
+$(CORE)/Core.o:		gemrb/core/Core.cpp
+	$(DO_CXX)
+$(CORE)/DataFileMgr.o:	gemrb/core/DataFileMgr.cpp
+	$(DO_CXX)
+$(CORE)/Dialog.o:	gemrb/core/Dialog.cpp
+	$(DO_CXX)
+$(CORE)/DialogHandler.o: gemrb/core/DialogHandler.cpp
+	$(DO_CXX)
+$(CORE)/DialogMgr.o:	gemrb/core/DialogMgr.cpp
+	$(DO_CXX)
+$(CORE)/DisplayMessage.o: gemrb/core/DisplayMessage.cpp
+	$(DO_CXX)
+$(CORE)/EffectMgr.o:	gemrb/core/EffectMgr.cpp
+	$(DO_CXX)
+$(CORE)/EffectQueue.o:	gemrb/core/EffectQueue.cpp
+	$(DO_CXX)
+$(CORE)/Factory.o:	gemrb/core/Factory.cpp
+	$(DO_CXX)
+$(CORE)/FactoryObject.o: gemrb/core/FactoryObject.cpp
+	$(DO_CXX)
+$(CORE)/FileCache.o:	gemrb/core/FileCache.cpp
+	$(DO_CXX)
+$(CORE)/FontManager.o:	gemrb/core/FontManager.cpp
+	$(DO_CXX)
+$(CORE)/Game.o:		gemrb/core/Game.cpp
+	$(DO_CXX)
+$(CORE)/GameData.o:	gemrb/core/GameData.cpp
+	$(DO_CXX)
+$(CORE)/GlobalTimer.o:	gemrb/core/GlobalTimer.cpp
+	$(DO_CXX)
+$(CORE)/Image.o:	gemrb/core/Image.cpp
+	$(DO_CXX)
+$(CORE)/ImageFactory.o:	gemrb/core/ImageFactory.cpp
+	$(DO_CXX)
+$(CORE)/ImageMgr.o:	gemrb/core/ImageMgr.cpp
+	$(DO_CXX)
+$(CORE)/ImageWriter.o:	gemrb/core/ImageWriter.cpp
+	$(DO_CXX)
+$(CORE)/IndexedArchive.o: gemrb/core/IndexedArchive.cpp
+	$(DO_CXX)
+$(CORE)/IniSpawn.o:	gemrb/core/IniSpawn.cpp
+	$(DO_CXX)
+$(CORE)/Interface.o:	gemrb/core/Interface.cpp
+	$(DO_CXX)
+$(CORE)/InterfaceConfig.o: gemrb/core/InterfaceConfig.cpp
+	$(DO_CXX)
+$(CORE)/Inventory.o:	gemrb/core/Inventory.cpp
+	$(DO_CXX)
+$(CORE)/Item.o:		gemrb/core/Item.cpp
+	$(DO_CXX)
+$(CORE)/ItemMgr.o:	gemrb/core/ItemMgr.cpp
+	$(DO_CXX)
+$(CORE)/KeyMap.o: 	gemrb/core/KeyMap.cpp
+	$(DO_CXX)
+$(CORE)/LRUCache.o:	gemrb/core/LRUCache.cpp
+	$(DO_CXX)
+$(CORE)/Map.o:		gemrb/core/Map.cpp
+	$(DO_CXX)
+$(CORE)/MapMgr.o:	gemrb/core/MapMgr.cpp
+	$(DO_CXX)
+$(CORE)/MapReverb.o:	gemrb/core/MapReverb.cpp
+	$(DO_CXX)
+$(CORE)/MoviePlayer.o:	gemrb/core/MoviePlayer.cpp
+	$(DO_CXX)
+$(CORE)/MusicMgr.o:	gemrb/core/MusicMgr.cpp
+	$(DO_CXX)
+$(CORE)/Palette.o:	gemrb/core/Palette.cpp
+	$(DO_CXX)
+$(CORE)/PalettedImageMgr.o: gemrb/core/PalettedImageMgr.cpp
+	$(DO_CXX)
+$(CORE)/Particles.o:	gemrb/core/Particles.cpp
+	$(DO_CXX)
+$(CORE)/PathFinder.o:	gemrb/core/PathFinder.cpp
+	$(DO_CXX)
+$(CORE)/Plugin.o:	gemrb/core/Plugin.cpp
+	$(DO_CXX)
+$(CORE)/PluginLoader.o:	gemrb/core/PluginLoader.cpp
+	$(DO_CXX)
+$(CORE)/PluginMgr.o:	gemrb/core/PluginMgr.cpp
+	$(DO_CXX)
+$(CORE)/Polygon.o:	gemrb/core/Polygon.cpp
+	$(DO_CXX)
+$(CORE)/Projectile.o:	gemrb/core/Projectile.cpp
+	$(DO_CXX)
+$(CORE)/ProjectileMgr.o: gemrb/core/ProjectileMgr.cpp
+	$(DO_CXX)
+$(CORE)/ProjectileServer.o: gemrb/core/ProjectileServer.cpp
+	$(DO_CXX)
+$(CORE)/Region.o:	gemrb/core/Region.cpp
+	$(DO_CXX)
+$(CORE)/Resource.o:	gemrb/core/Resource.cpp
+	$(DO_CXX)
+$(CORE)/ResourceDesc.o:	gemrb/core/ResourceDesc.cpp
+	$(DO_CXX)
+$(CORE)/ResourceManager.o: gemrb/core/ResourceManager.cpp
+	$(DO_CXX)
+$(CORE)/ResourceSource.o: gemrb/core/ResourceSource.cpp
+	$(DO_CXX)
+$(CORE)/SaveGameIterator.o: gemrb/core/SaveGameIterator.cpp
+	$(DO_CXX)
+$(CORE)/SaveGameMgr.o:	gemrb/core/SaveGameMgr.cpp
+	$(DO_CXX)
+$(CORE)/ScriptEngine.o: gemrb/core/ScriptEngine.cpp
+	$(DO_CXX)
+$(CORE)/ScriptedAnimation.o: gemrb/core/ScriptedAnimation.cpp
+	$(DO_CXX)
+$(CORE)/SoundMgr.o:	gemrb/core/SoundMgr.cpp
+	$(DO_CXX)
+$(CORE)/Spell.o:	gemrb/core/Spell.cpp
+	$(DO_CXX)
+$(CORE)/SpellMgr.o:	gemrb/core/SpellMgr.cpp
+	$(DO_CXX)
+$(CORE)/Spellbook.o:	gemrb/core/Spellbook.cpp
+	$(DO_CXX)
+$(CORE)/Sprite2D.o:	gemrb/core/Sprite2D.cpp
+	$(DO_CXX)
+$(CORE)/SpriteCover.o:	gemrb/core/SpriteCover.cpp
+	$(DO_CXX)
+$(CORE)/Store.o:	gemrb/core/Store.cpp
+	$(DO_CXX)
+$(CORE)/StoreMgr.o:	gemrb/core/StoreMgr.cpp
+	$(DO_CXX)
+$(CORE)/StringMgr.o:	gemrb/core/StringMgr.cpp
+	$(DO_CXX)
+$(CORE)/SymbolMgr.o:	gemrb/core/SymbolMgr.cpp
+	$(DO_CXX)
+$(CORE)/TableMgr.o:	gemrb/core/TableMgr.cpp
+	$(DO_CXX)
+$(CORE)/Tile.o:		gemrb/core/Tile.cpp
+	$(DO_CXX)
+$(CORE)/TileMap.o:	gemrb/core/TileMap.cpp
+	$(DO_CXX)
+$(CORE)/TileMapMgr.o:	gemrb/core/TileMapMgr.cpp
+	$(DO_CXX)
+$(CORE)/TileOverlay.o:	gemrb/core/TileOverlay.cpp
+	$(DO_CXX)
+$(CORE)/TileSetMgr.o:	gemrb/core/TileSetMgr.cpp
+	$(DO_CXX)
+$(CORE)/Variables.o:	gemrb/core/Variables.cpp
+	$(DO_CXX)
+$(CORE)/VEFObject.o: 	gemrb/core/VEFObject.cpp
+	$(DO_CXX)
+$(CORE)/Video.o:	gemrb/core/Video.cpp
+	$(DO_CXX)
+$(CORE)/WindowMgr.o:	gemrb/core/WindowMgr.cpp
+	$(DO_CXX)
+$(CORE)/WorldMap.o:	gemrb/core/WorldMap.cpp
+	$(DO_CXX)
+$(CORE)/WorldMapMgr.o:	gemrb/core/WorldMapMgr.cpp
+	$(DO_CXX)
+$(CORE)/RNG.o:		gemrb/core/RNG.cpp
+	$(DO_CXX)
+$(CORE)/Actions.o:	gemrb/core/GameScript/Actions.cpp
+	$(DO_CXX)
+$(CORE)/GSUtils.o:	gemrb/core/GameScript/GSUtils.cpp
+	$(DO_CXX)
+$(CORE)/GameScript.o:	gemrb/core/GameScript/GameScript.cpp
+	$(DO_CXX)
+$(CORE)/Matching.o:	gemrb/core/GameScript/Matching.cpp
+	$(DO_CXX)
+$(CORE)/Objects.o:	gemrb/core/GameScript/Objects.cpp
+	$(DO_CXX)
+$(CORE)/Triggers.o:	gemrb/core/GameScript/Triggers.cpp
+	$(DO_CXX)
+$(CORE)/Button.o:	gemrb/core/GUI/Button.cpp
+	$(DO_CXX)
+$(CORE)/Console.o:	gemrb/core/GUI/Console.cpp
+	$(DO_CXX)
+$(CORE)/Control.o:	gemrb/core/GUI/Control.cpp
+	$(DO_CXX)
+$(CORE)/EventMgr.o:	gemrb/core/GUI/EventMgr.cpp
+	$(DO_CXX)
+$(CORE)/GameControl.o:	gemrb/core/GUI/GameControl.cpp
+	$(DO_CXX)
+$(CORE)/Label.o:	gemrb/core/GUI/Label.cpp
+	$(DO_CXX)
+$(CORE)/MapControl.o:	gemrb/core/GUI/MapControl.cpp
+	$(DO_CXX)
+$(CORE)/Progressbar.o:	gemrb/core/GUI/Progressbar.cpp
+	$(DO_CXX)
+$(CORE)/ScrollBar.o:	gemrb/core/GUI/ScrollBar.cpp
+	$(DO_CXX)
+$(CORE)/Slider.o:	gemrb/core/GUI/Slider.cpp
+	$(DO_CXX)
+$(CORE)/TextArea.o:	gemrb/core/GUI/TextArea.cpp
+	$(DO_CXX)
+$(CORE)/TextEdit.o:	gemrb/core/GUI/TextEdit.cpp
+	$(DO_CXX)
+$(CORE)/Font.o:		gemrb/core/GUI/TextSystem/Font.cpp
+	$(DO_CXX)
+$(CORE)/GemMarkup.o:	gemrb/core/GUI/TextSystem/GemMarkup.cpp
+	$(DO_CXX)
+$(CORE)/TextContainer.o: gemrb/core/GUI/TextSystem/TextContainer.cpp
+	$(DO_CXX)
+$(CORE)/Window.o:	gemrb/core/GUI/Window.cpp
+	$(DO_CXX)
+$(CORE)/WorldMapControl.o: gemrb/core/GUI/WorldMapControl.cpp
+	$(DO_CXX)
+$(CORE)/Actor.o:	gemrb/core/Scriptable/Actor.cpp
+	$(DO_CXX)
+$(CORE)/CombatInfo.o:	gemrb/core/Scriptable/CombatInfo.cpp
+	$(DO_CXX)
+$(CORE)/Container.o:	gemrb/core/Scriptable/Container.cpp
+	$(DO_CXX)
+$(CORE)/Door.o:		gemrb/core/Scriptable/Door.cpp
+	$(DO_CXX)
+$(CORE)/InfoPoint.o:	gemrb/core/Scriptable/InfoPoint.cpp
+	$(DO_CXX)
+$(CORE)/Scriptable.o:	gemrb/core/Scriptable/Scriptable.cpp
+	$(DO_CXX)
+$(CORE)/PCStatStruct.o:	gemrb/core/Scriptable/PCStatStruct.cpp
+	$(DO_CXX)
+$(CORE)/DataStream.o:	gemrb/core/System/DataStream.cpp
+	$(DO_CXX)
+$(CORE)/FileStream.o:	gemrb/core/System/FileStream.cpp
+	$(DO_CXX)
+$(CORE)/MemoryStream.o:	gemrb/core/System/MemoryStream.cpp
+	$(DO_CXX)
+$(CORE)/Logger.o:	gemrb/core/System/Logger.cpp
+	$(DO_CXX)
+$(CORE)/File.o:		gemrb/core/System/Logger/File.cpp
+	$(DO_CXX)
+$(CORE)/MessageWindowLogger.o: gemrb/core/System/Logger/MessageWindowLogger.cpp
+	$(DO_CXX)
+$(CORE)/Stdio.o:	gemrb/core/System/Logger/Stdio.cpp
+	$(DO_CXX)
+$(CORE)/Logging.o:	gemrb/core/System/Logging.cpp
+	$(DO_CXX)
+$(CORE)/SlicedStream.o:	gemrb/core/System/SlicedStream.cpp
+	$(DO_CXX)
+$(CORE)/String.o:	gemrb/core/System/String.cpp
+	$(DO_CXX)
+$(CORE)/StringBuffer.o:	gemrb/core/System/StringBuffer.cpp
+	$(DO_CXX)
+$(CORE)/swab.o:		gemrb/core/System/swab.c
+	$(DO_CXX)
+$(CORE)/VFS.o:		gemrb/core/System/VFS.cpp
+	$(DO_CXX)
+$(CORE)/GemRB.o:	gemrb/GemRB.cpp
+	$(DO_CXX)
+$(CORE)/Morphos_extra.o: gemrb/core/Morphos_extra.cpp
+	$(DO_CXX)
+
+####
+
+$(PLUGINS)/ACMReader.o:	gemrb/plugins/ACMReader/ACMReader.cpp
+	$(DO_CXX)
+$(PLUGINS)/decoder.o:	gemrb/plugins/ACMReader/decoder.cpp
+	$(DO_CXX)
+$(PLUGINS)/unpacker.o:	gemrb/plugins/ACMReader/unpacker.cpp
+	$(DO_CXX)
+$(PLUGINS)/AREImporter.o: gemrb/plugins/AREImporter/AREImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/BAMFontManager.o: gemrb/plugins/BAMImporter/BAMFontManager.cpp
+	$(DO_CXX)
+$(PLUGINS)/BAMSprite2D.o: gemrb/plugins/BAMImporter/BAMSprite2D.cpp
+	$(DO_CXX)
+$(PLUGINS)/BAMImporter.o: gemrb/plugins/BAMImporter/BAMImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/BIFImporter.o: gemrb/plugins/BIFImporter/BIFImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/dct.o:	gemrb/plugins/BIKPlayer/dct.cpp
+	$(DO_CXX)
+$(PLUGINS)/BIKPlayer.o:	gemrb/plugins/BIKPlayer/BIKPlayer.cpp
+	$(DO_CXX)
+$(PLUGINS)/rational.o:	gemrb/plugins/BIKPlayer/rational.cpp
+	$(DO_CXX)
+$(PLUGINS)/mem.o:	gemrb/plugins/BIKPlayer/mem.cpp
+	$(DO_CXX)
+$(PLUGINS)/GetBitContext.o: gemrb/plugins/BIKPlayer/GetBitContext.cpp
+	$(DO_CXX)
+$(PLUGINS)/fft.o:	gemrb/plugins/BIKPlayer/fft.cpp
+	$(DO_CXX)
+$(PLUGINS)/rdft.o:	gemrb/plugins/BIKPlayer/rdft.cpp
+	$(DO_CXX)
+$(PLUGINS)/BMPImporter.o: gemrb/plugins/BMPImporter/BMPImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/BMPWriter.o:	gemrb/plugins/BMPWriter/BMPWriter.cpp
+	$(DO_CXX)
+$(PLUGINS)/DirectoryImporter.o: gemrb/plugins/DirectoryImporter/DirectoryImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/DLGImporter.o: gemrb/plugins/DLGImporter/DLGImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/TISImporter.o: gemrb/plugins/TISImporter/TISImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/CHUImporter.o: gemrb/plugins/CHUImporter/CHUImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/2DAImporter.o: gemrb/plugins/2DAImporter/2DAImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/PSTOpcodes.o: gemrb/plugins/PSTOpcodes/PSTOpcodes.cpp
+	$(DO_CXX)
+$(PLUGINS)/ITMImporter.o: gemrb/plugins/ITMImporter/ITMImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/IDSImporter.o: gemrb/plugins/IDSImporter/IDSImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/STOImporter.o: gemrb/plugins/STOImporter/STOImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/INIImporter.o: gemrb/plugins/INIImporter/INIImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/MOSImporter.o: gemrb/plugins/MOSImporter/MOSImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/SPLImporter.o: gemrb/plugins/SPLImporter/SPLImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/NullSound.o:	gemrb/plugins/NullSound/NullSound.cpp
+	$(DO_CXX)
+$(PLUGINS)/OpenALAudio.o: gemrb/plugins/OpenALAudio/OpenALAudio.cpp
+	$(DO_CXX)
+$(PLUGINS)/AmbientMgrAL.o: gemrb/plugins/OpenALAudio/AmbientMgrAL.cpp
+	$(DO_CXX)
+$(PLUGINS)/StackLock.o: gemrb/plugins/OpenALAudio/StackLock.cpp
+	$(DO_CXX)
+$(PLUGINS)/EFFImporter.o: gemrb/plugins/EFFImporter/EFFImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/FXOpcodes.o:	gemrb/plugins/FXOpcodes/FXOpcodes.cpp
+	$(DO_CXX)
+$(PLUGINS)/CREImporter.o: gemrb/plugins/CREImporter/CREImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/PROImporter.o: gemrb/plugins/PROImporter/PROImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/GAMImporter.o: gemrb/plugins/GAMImporter/GAMImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/PythonHelpers.o: gemrb/plugins/GUIScript/PythonHelpers.cpp
+	$(DO_CXX)
+$(PLUGINS)/GUIScript.o:	gemrb/plugins/GUIScript/GUIScript.cpp
+	$(DO_CXX)
+$(PLUGINS)/SAVImporter.o: gemrb/plugins/SAVImporter/SAVImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/SDLAudio.o: 	gemrb/plugins/SDLAudio/SDLAudio.cpp
+	$(DO_CXX)
+$(PLUGINS)/SDL12Video.o: gemrb/plugins/SDLVideo/SDL12Video.cpp
+	$(DO_CXX)
+$(PLUGINS)/SDLVideo.o:	gemrb/plugins/SDLVideo/SDLVideo.cpp
+	$(DO_CXX)
+$(PLUGINS)/SDLSurfaceSprite2D.o: gemrb/plugins/SDLVideo/SDLSurfaceSprite2D.cpp
+	$(DO_CXX)
+$(PLUGINS)/KEYImporter.o: gemrb/plugins/KEYImporter/KEYImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/IWDOpcodes.o: gemrb/plugins/IWDOpcodes/IWDOpcodes.cpp
+	$(DO_CXX)
+$(PLUGINS)/mveaudiodec.o: gemrb/plugins/MVEPlayer/mveaudiodec.cpp
+	$(DO_CXX)
+$(PLUGINS)/mvevideodec8.o: gemrb/plugins/MVEPlayer/mvevideodec8.cpp
+	$(DO_CXX)
+$(PLUGINS)/MVEPlayer.o:	gemrb/plugins/MVEPlayer/MVEPlayer.cpp
+	$(DO_CXX)
+$(PLUGINS)/mve_player.o: gemrb/plugins/MVEPlayer/mve_player.cpp
+	$(DO_CXX)
+$(PLUGINS)/mvevideodec16.o: gemrb/plugins/MVEPlayer/mvevideodec16.cpp
+	$(DO_CXX)
+$(PLUGINS)/NullSource.o: gemrb/plugins/NullSource/NullSource.cpp
+	$(DO_CXX)
+$(PLUGINS)/PLTImporter.o: gemrb/plugins/PLTImporter/PLTImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/TLKImporter.o: gemrb/plugins/TLKImporter/TLKImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/TlkOverride.o: gemrb/plugins/TLKImporter/TlkOverride.cpp
+	$(DO_CXX)
+$(PLUGINS)/MUSImporter.o: gemrb/plugins/MUSImporter/MUSImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/WMPImporter.o: gemrb/plugins/WMPImporter/WMPImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/WEDImporter.o: gemrb/plugins/WEDImporter/WEDImporter.cpp
+	$(DO_CXX)
+$(PLUGINS)/WAVReader.o:	gemrb/plugins/WAVReader/WAVReader.cpp
+	$(DO_CXX)
+$(PLUGINS)/ZLibManager.o: gemrb/plugins/ZLibManager/ZLibManager.cpp
+	$(DO_CXX)

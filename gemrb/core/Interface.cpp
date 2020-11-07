@@ -144,7 +144,11 @@ Interface::Interface()
 
 	projserv = NULL;
 	VideoDriverName = "sdl";
+#if defined(__MORPHOS__)
+	AudioDriverName = "sdlaudio";
+#else
 	AudioDriverName = "openal";
+#endif
 	vars = NULL;
 	tokens = NULL;
 	lists = NULL;
@@ -208,7 +212,11 @@ Interface::Interface()
 	MouseFeedback = 0;
 	TooltipDelay = 100;
 	IgnoreOriginalINI = 0;
+#if defined(__MORPHOS__)
+	Bpp = 16;
+#else
 	Bpp = 32;
+#endif
 	GUIScriptsPath[0] = 0;
 	GamePath[0] = 0;
 	SavePath[0] = 0;
@@ -269,6 +277,8 @@ Interface::Interface()
 #else // HAVE_ICONV
 	SystemEncoding = nullptr;
 #endif// HAVE_ICONV
+#elif defined(__MORPHOS__)
+	SystemEncoding = nullptr;
 #else // WIN32
 	SystemEncoding = nl_langinfo(CODESET);
 #endif // WIN32
@@ -1389,7 +1399,11 @@ int Interface::Init(InterfaceConfig* config)
 	CONFIG_PATH("GemRBPath", GemRBPath,
 				CopyGemDataPath(GemRBPath, _MAX_PATH));
 
+#if defined(__MORPHOS__)
+	CONFIG_PATH("CachePath", CachePath, "Cache");
+#else
 	CONFIG_PATH("CachePath", CachePath, "./Cache");
+#endif
 	FixPath( CachePath, false );
 
 	CONFIG_PATH("GUIScriptsPath", GUIScriptsPath, GemRBPath);
@@ -1464,10 +1478,12 @@ int Interface::Init(InterfaceConfig* config)
 		error("Core", "Unable to create cache directory '%s'", CachePath);
 	}
 
+#if !defined(__MORPHOS__)
 	if ( StupidityDetector( CachePath )) {
 		Log(ERROR, "Core", "Cache path %s doesn't exist, not a folder or contains alien files!", CachePath );
 		return GEM_ERROR;
 	}
+#endif
 	if (!KeepCache) DelTree((const char *) CachePath, false);
 
 	Log(MESSAGE, "Core", "Starting Plugin Manager...");
@@ -1610,6 +1626,17 @@ int Interface::Init(InterfaceConfig* config)
 	}
 	strcpy( NextScript, "Start" );
 
+#if defined (__MORPHOS__)
+
+	{
+		char path[_MAX_PATH];
+		PathJoin(path, GemRBOverridePath, "override", GameType, NULL);
+		gamedata->AddSource(path, "GemRB Override", PLUGIN_RESOURCE_CACHEDDIRECTORY, RM_REPLACE_SAME_SOURCE);
+		PathJoin(path, GemRBUnhardcodedPath, "unhardcoded", GameType, NULL);
+		gamedata->AddSource(path, "GemRB Unhardcoded data", PLUGIN_RESOURCE_CACHEDDIRECTORY, RM_REPLACE_SAME_SOURCE);
+	}
+
+#else
 	// re-set the gemrb override path, since we now have the correct GameType if 'auto' was used
 	char path[_MAX_PATH];
 	PathJoin(path, GemRBOverridePath, "override", GameType, nullptr);
@@ -1617,6 +1644,8 @@ int Interface::Init(InterfaceConfig* config)
 	char unhardcodedTypePath[_MAX_PATH * 2];
 	PathJoin(unhardcodedTypePath, GemRBUnhardcodedPath, "unhardcoded", GameType, nullptr);
 	gamedata->AddSource(unhardcodedTypePath, "GemRB Unhardcoded data", PLUGIN_RESOURCE_CACHEDDIRECTORY, RM_REPLACE_SAME_SOURCE);
+
+#endif
 
 	// fix the sample config default resolution for iwd2
 	if (stricmp(GameType, "iwd2") == 0 && Width == 640 && Height == 480) {
@@ -1984,6 +2013,8 @@ int Interface::Init(InterfaceConfig* config)
 
 	Log(MESSAGE, "Core", "Core Initialization Complete!");
 
+#if !defined(__MORPHOS__)
+
 	// dump the potentially changed unhardcoded path to a file that weidu looks at automatically to get our search paths
 	char pathString[_MAX_PATH * 3];
 #ifdef HAVE_REALPATH
@@ -2005,6 +2036,7 @@ int Interface::Init(InterfaceConfig* config)
 		pathFile->Close();
 	}
 	delete pathFile;
+#endif
 	return GEM_OK;
 }
 
