@@ -144,11 +144,7 @@ Interface::Interface()
 
 	projserv = NULL;
 	VideoDriverName = "sdl";
-#if defined(__MORPHOS__)
-	AudioDriverName = "sdlaudio";
-#else
 	AudioDriverName = "openal";
-#endif
 	vars = NULL;
 	tokens = NULL;
 	lists = NULL;
@@ -212,11 +208,7 @@ Interface::Interface()
 	MouseFeedback = 0;
 	TooltipDelay = 100;
 	IgnoreOriginalINI = 0;
-#if defined(__MORPHOS__)
-	Bpp = 16;
-#else
 	Bpp = 32;
-#endif
 	GUIScriptsPath[0] = 0;
 	GamePath[0] = 0;
 	SavePath[0] = 0;
