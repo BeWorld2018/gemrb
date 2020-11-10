@@ -1,3 +1,5 @@
+// code from the AROS Team (unknown author)
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -478,3 +480,23 @@ int vswprintf(wchar_t *buf, size_t n, const wchar_t *fmt, va_list args)
 	return _vsnwprintf(buf, n, fmt, args);
 }
 
+int swscanf(const wchar_t *ws, const wchar_t *fmt, ...) // Cowcat
+{
+	va_list args;
+	int i;
+
+	char *str = new char[255];
+	char *mbstr = new char[255];
+
+	wcstombs(str, ws, 255);
+	wcstombs(mbstr, fmt, 255);
+	
+	va_start(args, fmt);
+	i = vsscanf(str, mbstr, args);
+	va_end(args);
+
+	delete str;
+	delete mbstr;
+
+	return i;
+}
