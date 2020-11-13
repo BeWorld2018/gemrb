@@ -96,6 +96,7 @@
 
 #ifdef WIN32
 #include "CodepageToIconv.h"
+#elif __MORPHOS__
 #else
 #include <langinfo.h>
 #endif
